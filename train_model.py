@@ -10,7 +10,13 @@ from core import CNNWithDropout
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from config import test_folder, train_folder, learning_rate, device, saved_model_path
+import sys
 
+# 打开一个文件
+log_file = open("output.log", "w")
+
+# 将标准输出重定向到文件
+sys.stdout = log_file
 
 # 初始化模型、损失函数和优化器
 model = CNNWithDropout(num_classes=10)
@@ -88,7 +94,8 @@ eval_model_func()
 print("\n\nend eval time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 
-
+# 记得关闭文件
+log_file.close()
 
 
 
