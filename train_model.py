@@ -9,20 +9,28 @@ import torch.optim as optim
 from core import CNNWithDropout, transform
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from config import test_folder, train_folder, learning_rate, device, saved_model_path
-import sys
+from config import test_folder, train_folder, learning_rate, device, saved_model_path, log_file
+import logging
+
+# 配置logging模块
+logging.basicConfig(
+    filename=log_file,  # 日志文件名
+    filemode='a',             # 追加模式
+    format='%(asctime)s - %(levelname)s - %(message)s',  # 日志格式
+    level=logging.INFO        # 日志级别
+)
 
 # 打开一个文件
-log_file = open("output.log", "w")
+# log_file = open("output.log", "w")
 
 # 将标准输出重定向到文件
-sys.stdout = log_file
+# sys.stdout = log_file
 
 # 初始化模型、损失函数和优化器
 model = CNNWithDropout(num_classes=10)
 criterion = nn.CrossEntropyLoss()  # 使用交叉熵作为损失函数
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.1)
 
 
 # 第二步：使用 ImageFolder 加载数据集
@@ -30,8 +38,8 @@ train_dataset = datasets.ImageFolder(root=train_folder, transform=transform)
 test_dataset = datasets.ImageFolder(root=test_folder, transform=transform)
 
 # 查看类别标签与索引的映射关系
-print(f"-----train_dataset.class_to_idx: {train_dataset.class_to_idx}")
-print(f"-----test_dataset.class_to_idx: {test_dataset.class_to_idx}")
+logging.info(f"-----train_dataset.class_to_idx: {train_dataset.class_to_idx}")
+logging.info(f"-----test_dataset.class_to_idx: {test_dataset.class_to_idx}")
 
 
 # 第三步：创建数据加载器 (DataLoader)
@@ -42,7 +50,7 @@ test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 def train_model_func():
     model.to(device)
 
-    for epoch in range(9):  # 训练9个Epoch
+    for epoch in range(20):  # 训练20个Epoch
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
             inputs, labels = data
@@ -62,10 +70,10 @@ def train_model_func():
 
             running_loss += loss.item()
             if i % 10 == 9:  # 每10个batch打印一次损失
-                print(f'[Epoch {epoch + 1}, Batch {i + 1}] loss: {running_loss / 100:.3f}')
+                logging.info(f'[Epoch {epoch + 1}, Batch {i + 1}] loss: {running_loss / 100:.3f}')
                 running_loss = 0.0
         scheduler.step()  # 调整学习率
-    print('\n\n-------------Finished Training-----------\n\n')
+    logging.info('\n\n-------------Finished Training-----------\n\n')
 
 
 def eval_model_func():
@@ -80,21 +88,21 @@ def eval_model_func():
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print(f'Accuracy of the network on the {total} test images: {100 * correct / total}%')
+    logging.info(f'Accuracy of the network on the {total} test images: {100 * correct / total}%')
     torch.save(model.state_dict(), saved_model_path)
-    print('\n\n-------------model saved-----------\n\n')
+    logging.info('\n\n-------------model saved-----------\n\n')
 
 
-print("\nstart train time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+logging.info("\nstart train time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 train_model_func()
-print("\n\nend train time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-print("\nstart eval time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+logging.info("\n\nend train time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+logging.info("\nstart eval time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 eval_model_func()
-print("\n\nend eval time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+logging.info("\n\nend eval time: %s" % datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 
 # 记得关闭文件
-log_file.close()
+# log_file.close()
 
 
 

@@ -2,13 +2,18 @@
 # @Author: WalkerZ
 # @Time: 2024/9/28
 
-import os
 from flask import Flask, request, render_template, redirect, url_for, jsonify
-from werkzeug.utils import secure_filename
-import torch
 from reckon_image import reckon_img
-from torchvision import transforms
-from PIL import Image
+from config import log_file
+import logging
+
+# 配置logging模块
+logging.basicConfig(
+    filename=log_file,  # 日志文件名
+    filemode='a',             # 追加模式
+    format='%(asctime)s - %(levelname)s - %(message)s',  # 日志格式
+    level=logging.INFO        # 日志级别
+)
 
 # 初始化 Flask 应用
 app = Flask(__name__)

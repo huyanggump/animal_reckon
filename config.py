@@ -12,6 +12,8 @@ learning_rate = 0.001
 train_folder = "../../data_sets/corrado_animals10/train"
 test_folder = "../../data_sets/corrado_animals10/test"
 
+log_file = "../../walkerz_logs/walker_animal_reckon/run.log"
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 idx_to_labels = {0: 'cane', 1: 'cavallo', 2: 'elefante', 3: 'farfalla', 4: 'gallina', 5: 'gatto', 6: 'mucca', 7: 'pecora', 8: 'ragno', 9: 'scoiattolo'}
