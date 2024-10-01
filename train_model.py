@@ -22,7 +22,7 @@ sys.stdout = log_file
 model = CNNWithDropout(num_classes=10)
 criterion = nn.CrossEntropyLoss()  # 使用交叉熵作为损失函数
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
 transform = transforms.Compose([
     transforms.RandomHorizontalFlip(),  # 随机水平翻转
@@ -43,7 +43,7 @@ test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 def train_model_func():
     model.to(device)
 
-    for epoch in range(10):  # 训练10个Epoch
+    for epoch in range(9):  # 训练9个Epoch
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
             inputs, labels = data
