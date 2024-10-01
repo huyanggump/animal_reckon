@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import time, datetime
 import torch.optim as optim
-from core import CNNWithDropout
+from core import CNNWithDropout, transform
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from config import test_folder, train_folder, learning_rate, device, saved_model_path
@@ -24,16 +24,15 @@ criterion = nn.CrossEntropyLoss()  # 使用交叉熵作为损失函数
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
-transform = transforms.Compose([
-    transforms.RandomHorizontalFlip(),  # 随机水平翻转
-    transforms.Resize((64, 64)),  # 根据需要调整图像大小
-    transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # 归一化
-])
 
 # 第二步：使用 ImageFolder 加载数据集
 train_dataset = datasets.ImageFolder(root=train_folder, transform=transform)
 test_dataset = datasets.ImageFolder(root=test_folder, transform=transform)
+
+# 查看类别标签与索引的映射关系
+print(f"-----train_dataset.class_to_idx: {train_dataset.class_to_idx}")
+print(f"-----test_dataset.class_to_idx: {test_dataset.class_to_idx}")
+
 
 # 第三步：创建数据加载器 (DataLoader)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)

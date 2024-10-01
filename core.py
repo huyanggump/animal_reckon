@@ -5,8 +5,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-import torch.optim as optim
-import time
+from torchvision import transforms
 
 
 class CNNWithDropout(nn.Module):
@@ -55,6 +54,12 @@ class CNNWithDropout(nn.Module):
         return x
 
 
+transform = transforms.Compose([
+    transforms.RandomHorizontalFlip(),  # 随机水平翻转
+    transforms.Resize((64, 64)),  # 根据需要调整图像大小
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # 归一化
+])
 
 
 
