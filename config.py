@@ -12,7 +12,8 @@ learning_rate = 0.0015 # 0.001
 train_folder = "../../data_sets/corrado_animals10/train"
 test_folder = "../../data_sets/corrado_animals10/test"
 
-log_file = "../../walkerz_logs/walker_animal_reckon/run.log"
+train_log_file = "../../walkerz_logs/walker_animal_reckon/train.log"
+api_log_file = "../../walkerz_logs/walker_animal_reckon/web_api.log"
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

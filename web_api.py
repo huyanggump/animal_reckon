@@ -4,12 +4,12 @@
 
 from flask import Flask, request, render_template, redirect, url_for, jsonify
 from reckon_image import reckon_img
-from config import log_file
+from config import api_log_file
 import logging
 
 # 配置logging模块
 logging.basicConfig(
-    filename=log_file,  # 日志文件名
+    filename=api_log_file,  # 日志文件名
     filemode='a',             # 追加模式
     format='%(asctime)s - %(levelname)s - %(message)s',  # 日志格式
     level=logging.INFO        # 日志级别
@@ -18,9 +18,9 @@ logging.basicConfig(
 # 初始化 Flask 应用
 app = Flask(__name__)
 
-# 上传文件保存路径
-UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# # 上传文件保存路径
+# UPLOAD_FOLDER = 'uploads'
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 允许上传的文件类型
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
