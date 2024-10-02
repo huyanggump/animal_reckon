@@ -30,7 +30,7 @@ logging.basicConfig(
 model = CNNWithDropout(num_classes=10)
 criterion = nn.CrossEntropyLoss()  # 使用交叉熵作为损失函数
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=4, gamma=0.1)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
 
 
 # 第二步：使用 ImageFolder 加载数据集
@@ -43,14 +43,14 @@ logging.info(f"-----test_dataset.class_to_idx: {test_dataset.class_to_idx}")
 
 
 # 第三步：创建数据加载器 (DataLoader)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=96, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=96, shuffle=False)
 
 
 def train_model_func():
     model.to(device)
 
-    for epoch in range(20):  # 训练20个Epoch
+    for epoch in range(30):  # 训练30个Epoch
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
             inputs, labels = data
