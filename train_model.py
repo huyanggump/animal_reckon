@@ -51,6 +51,7 @@ def train_model_func():
     model.to(device)
 
     for epoch in range(30):  # 训练30个Epoch
+        model.train()
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
             inputs, labels = data

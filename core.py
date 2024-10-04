@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 from torchvision import transforms
+import torch.nn.init as init  # 导入初始化模块
 
 
 class CNNWithDropout(nn.Module):
@@ -29,6 +30,21 @@ class CNNWithDropout(nn.Module):
         # Dropout 防止过拟合
         self.dropout = nn.Dropout(0.3)
 
+        # 初始化权重
+        self._initialize_weights()  # 添加权重初始化
+
+    def _initialize_weights(self):
+        # 遍历模型的每一层，并进行初始化
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):  # 对卷积层进行 He 初始化
+                init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    init.constant_(m.bias, 0)  # 将偏置初始化为 0
+            elif isinstance(m, nn.Linear):  # 对全连接层进行 He 初始化
+                init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    init.constant_(m.bias, 0)
+
     def forward(self, x):
         # 第一部分：2个卷积层 + 池化层
         x = F.relu(self.conv1(x))  # 第一层卷积+激活
@@ -41,7 +57,6 @@ class CNNWithDropout(nn.Module):
         x = self.pool2(x)  # 池化层
 
         # 扁平化，将卷积输出展开为一维向量
-        # x = x.view(-1, 256 * 8 * 8)
         x = torch.flatten(x, 1)
 
         # 全连接层部分
@@ -56,6 +71,7 @@ class CNNWithDropout(nn.Module):
 
 transform = transforms.Compose([
     transforms.RandomHorizontalFlip(),  # 随机水平翻转
+    transforms.RandomRotation(10),  # 随机旋转10度
     transforms.Resize((64, 64)),  # 根据需要调整图像大小
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # 归一化
