@@ -28,7 +28,7 @@ def reckon_img(image):
 
     # 打印分类结果
     label = idx_to_labels[predicted_class.item()]
-    return f"您上传的动物类别是: {name_translate[label]}"
+    return f"您上传的图片内容包含: {name_translate[label]}"
 
 
 def reckon_img_test():
