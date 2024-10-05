@@ -6,8 +6,8 @@ import torch
 import torch.nn as nn
 import time, datetime
 import torch.optim as optim
-from core import CNNWithDropout, transform
-from torchvision import datasets, transforms
+from core import transform
+from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from config import test_folder, train_folder, learning_rate, device, saved_model_path, train_log_file
 import logging
@@ -27,7 +27,11 @@ logging.basicConfig(
 # sys.stdout = log_file
 
 # 初始化模型、损失函数和优化器
-model = CNNWithDropout(num_classes=10)
+# model = CNNWithDropout(num_classes=10)
+model = models.resnet18(pretrained=False)
+# 修改最后的全连接层以适应CIFAR-10的10个类别
+model.fc = nn.Linear(model.fc.in_features, 10)
+
 criterion = nn.CrossEntropyLoss()  # 使用交叉熵作为损失函数
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
