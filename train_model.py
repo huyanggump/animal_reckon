@@ -30,12 +30,12 @@ logging.basicConfig(
 model = CNNWithDropout(num_classes=10)
 criterion = nn.CrossEntropyLoss()  # 使用交叉熵作为损失函数
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
 
 # 第二步：使用 ImageFolder 加载数据集
-train_dataset = datasets.ImageFolder(root=train_folder, transform=transform)
-test_dataset = datasets.ImageFolder(root=test_folder, transform=transform)
+train_dataset = datasets.CIFAR10(root=train_folder, train=True, download=True, transform=transform)
+test_dataset = datasets.CIFAR10(root=test_folder, train=False, download=True, transform=transform)
 
 # 查看类别标签与索引的映射关系
 logging.info(f"-----train_dataset.class_to_idx: {train_dataset.class_to_idx}")
@@ -43,14 +43,14 @@ logging.info(f"-----test_dataset.class_to_idx: {test_dataset.class_to_idx}")
 
 
 # 第三步：创建数据加载器 (DataLoader)
-train_loader = DataLoader(train_dataset, batch_size=96, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=96, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=256, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=256, shuffle=False)
 
 
 def train_model_func():
     model.to(device)
 
-    for epoch in range(30):  # 训练30个Epoch
+    for epoch in range(21):  # 训练21个Epoch
         model.train()
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):
@@ -74,10 +74,30 @@ def train_model_func():
                 logging.info(f'[Epoch {epoch + 1}, Batch {i + 1}] loss: {running_loss / 100:.3f}')
                 running_loss = 0.0
         scheduler.step()  # 调整学习率
+
+        test_model_func()
+
     logging.info('\n\n-------------Finished Training-----------\n\n')
 
 
+def test_model_func():
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():  # 在评估时不需要计算梯度
+        for data in test_loader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    logging.info(f'Accuracy of the network on the {total} test images: {100 * correct / total}%')
+
+
 def eval_model_func():
+    model.eval()
     correct = 0
     total = 0
     with torch.no_grad():  # 在评估时不需要计算梯度
