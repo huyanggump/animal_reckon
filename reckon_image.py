@@ -6,9 +6,13 @@ import torch
 from core import CNNWithDropout, transform
 from config import saved_model_path, device, idx_to_labels, name_translate
 from PIL import Image
+from torchvision import models
 
 def reckon_img(image):
-    model = CNNWithDropout()
+    # model = CNNWithDropout()
+    model = models.resnet50(pretrained=True)
+    num_ftrs = model.fc.in_features
+    model.fc = torch.nn.Linear(num_ftrs, 10)  # 修改最后一层，使其与加载的权重匹配
     model.load_state_dict(torch.load(saved_model_path))
     model.to(device)
     model.eval()  # 设置模型为推断模式
@@ -28,7 +32,7 @@ def reckon_img(image):
 
     # 打印分类结果
     label = idx_to_labels[predicted_class.item()]
-    return f"您上传的动物类别是: {name_translate[label]}"
+    return f"您上传的图片内容是: {name_translate[label]}"
 
 
 def reckon_img_test():
