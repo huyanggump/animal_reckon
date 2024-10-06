@@ -28,7 +28,7 @@ logging.basicConfig(
 
 # 初始化模型、损失函数和优化器
 # model = CNNWithDropout(num_classes=10)
-model = models.resnet18(pretrained=False)
+model = models.resnet50(pretrained=True)
 # 修改最后的全连接层以适应CIFAR-10的10个类别
 model.fc = nn.Linear(model.fc.in_features, 10)
 
@@ -54,7 +54,7 @@ test_loader = DataLoader(test_dataset, batch_size=256, shuffle=False)
 def train_model_func():
     model.to(device)
 
-    for epoch in range(21):  # 训练21个Epoch
+    for epoch in range(18):  # 训练21个Epoch
         model.train()
         running_loss = 0.0
         for i, data in enumerate(train_loader, 0):

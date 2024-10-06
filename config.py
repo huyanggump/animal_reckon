@@ -5,7 +5,7 @@ import torch
 
 # saved_model_path = '../../saved_models/corrado_animals10.pth'
 # saved_model_path = '../../saved_models/cifar10.pth'
-saved_model_path = '../../saved_models/cifar10_resnet.pth'
+saved_model_path = '../../saved_models/cifar10_resnet50.pth'
 
 # 超参数定义
 learning_rate = 0.001 #
