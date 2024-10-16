@@ -24,6 +24,7 @@ def reckon_img(image):
     image = transform(image)  # 预处理图片
 
     image = image.unsqueeze(0)  # 增加批次维度
+    image = image.to(device)  # 将图片移动到 GPU 上
 
     # 将图像输入模型进行分类推断
     with torch.no_grad():
@@ -49,6 +50,7 @@ def reckon_img_test():
     image = Image.open(image_path)          # 使用 PIL 加载图片
     image = transform(image)               # 预处理图片
     image = image.unsqueeze(0)              # 增加批次维度
+    image = image.to(device)  # 将图片移动到 GPU 上
 
     # 将图像输入模型进行分类推断
     with torch.no_grad():
